@@ -1,8 +1,11 @@
 import React from "react";
+import { connect, mapDispatchToProps } from "react-redux";
 import "../stylesheets/main.scss";
 
 // app component
-export default class App extends React.Component {
+export class App extends React.Component {
+  
+
   // render
   render() {
     return (
