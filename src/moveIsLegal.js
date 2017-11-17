@@ -13,6 +13,52 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 		return false;
 	}
 
+	// create paths for pieces that move in straight lines
+	var MOVE_PATHS;
+	if( pieceToMove.type==="queen" || pieceToMove.type==="bishop" || pieceToMove.type==="rook" ) {
+		MOVE_PATHS = { 
+			squaresL: getAvailableSquaresInDirection( 0, -1 ),
+			squaresR: getAvailableSquaresInDirection( 0, 1 ),
+			squaresU: getAvailableSquaresInDirection( -1, 0 ),
+			squaresD: getAvailableSquaresInDirection( 1, 0 ),
+			squaresUL: getAvailableSquaresInDirection( -1, -1 ),
+			squaresUR: getAvailableSquaresInDirection( -1, 1 ),
+			squaresDR: getAvailableSquaresInDirection( 1, 1 ),
+			squaresDL: getAvailableSquaresInDirection( 1, -1 )
+		}
+
+		function getAvailableSquaresInDirection( rowIncrement, columnIncrement ) {
+			const result = [];
+
+			for( var n = 1; n < 7; ++n ) {
+				var testRow = pieceToMove.originPos.row+n*rowIncrement;
+				var testCol = pieceToMove.originPos.column+n*columnIncrement;
+
+				if( testRow<0||testRow>7 || testCol<0||testCol>7 ) {
+					// off the board
+					return result;
+				}
+
+				var testSquare = gameState.board[testRow]? gameState.board[testRow][testCol] : null;
+
+				if( testSquare && testSquare.piece ) {
+					if( testSquare.piece.color===pieceToMove.color) {
+						// path is blocked by a friendly piece
+						return result;
+					} else {
+						// can capture - so add it as available, but stop iterating
+						result.push( {row:testRow,column:testCol} );
+						break;
+					}
+				} else {
+					result.push( {row:testRow,column:testCol} );
+				}
+			}
+
+			return result;
+		}
+	}
+
 	switch( pieceToMove.type ) {
 		
 		case "pawn":
@@ -43,8 +89,18 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 			}
 
 			// TO DO: en passant
-	}
 
-	return false;
+		case "queen":
+			for( var prop in MOVE_PATHS ) {
+				for( var i = 0; i < MOVE_PATHS[prop].length; ++i ) {
+					if( MOVE_PATHS[prop][i].row===targetPos.row && MOVE_PATHS[prop][i].column===targetPos.column ) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+
+	}	
 }
 module.exports = moveIsLegal;
