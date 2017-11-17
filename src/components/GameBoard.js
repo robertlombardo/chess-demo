@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 export class GameBoard extends React.Component {
   // render
   render() {
-  	const BOARD_SIZE = Math.min( this.props.ui.screenWidth, this.props.ui.screenHeight );
+  	const BOARD_SIZE = this.props.ui.gameBoardSize;
   	const SQUARE_SIZE = BOARD_SIZE/8;
   	const IMG_COORDS_BY_PIECE = {
 		white_king: { x:SQUARE_SIZE*0, y:0 },

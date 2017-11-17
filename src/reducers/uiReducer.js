@@ -3,6 +3,7 @@ import moveIsLegal from "../moveIsLegal";
 const initialState = {
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
+    gameBoardSize: Math.min( window.innerHeight, window.innerWidth ),
     pieceInHand: null,
     legalMoveSquares: []
 };
@@ -12,7 +13,8 @@ export default function uiReducer(state = initialState, action) {
         case "SCREEN_RESIZE":
         	return Object.assign({}, state, {
                 screenWidth: action.screenWidth,
-                screenHeight: action.screenHeight
+                screenHeight: action.screenHeight,
+                gameBoardSize: Math.min( window.innerHeight, window.innerWidth ),
             });
 
         case "PICK_UP_PIECE":

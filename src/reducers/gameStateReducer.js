@@ -79,6 +79,12 @@ export default function gameState( state={board:initialBoard,turn:"white"}, acti
 
       return newState;
 
+    case "RESET_GAME_BOARD":
+      return {
+        board: initialBoard,
+        turn: "white"
+      }
+
     // initial state
     default:
       return state;

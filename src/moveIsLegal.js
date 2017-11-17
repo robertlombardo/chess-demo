@@ -91,7 +91,6 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 					return true;
 				}
 			}
-
 			// TO DO: en passant
 
 		case "queen":
@@ -104,10 +103,16 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 					}
 				}
 			}
-
 			return false;
 
+		case "king":
+			// TO DO
 
+		case "knight":
+			// TO DO
+
+		default:
+			return false;
 	}	
 }
 module.exports = moveIsLegal;
