@@ -23,26 +23,35 @@ export class GameBoard extends React.Component {
 		black_pawn: { x:SQUARE_SIZE*5, y:SQUARE_SIZE }
 	}
 
-	console.log( this.props.ui );
-
     return (
 		<Table className="game-board" style={{width:BOARD_SIZE}}>
 		    <tbody>
-				{this.props.game_board.map((row,i)=>{
+				{this.props.gameState.board.map((row,i)=>{
 					return( 
 						<tr style={{height:SQUARE_SIZE}} key={i}>
 							{row.map((square,i)=>{
 								const hasPieceAndIsInHand = 
 									   this.props.ui.pieceInHand
-									&& this.props.ui.pieceInHand.originPos.x===square.x
-									&& this.props.ui.pieceInHand.originPos.y===square.y;
+									&& this.props.ui.pieceInHand.originPos.row===square.row
+									&& this.props.ui.pieceInHand.originPos.column===square.column;
+
+								var isALegalMoveTarget = false;
+								if( this.props.ui.pieceInHand && this.props.ui.legalMoveSquares  ) {
+									for( var j = 0; j < this.props.ui.legalMoveSquares.length; ++j ) {
+										var candidate = this.props.ui.legalMoveSquares[j];
+										if( square.row===candidate.row && square.column===candidate.column ) {
+											isALegalMoveTarget=  true;
+											break;
+										}
+									}
+								}
 
 								return(
 									<td className={"square "+square.color+"-square"} 
 										style={{
 											width:SQUARE_SIZE,
 											height:SQUARE_SIZE,
-											border: hasPieceAndIsInHand? "3px solid yellow" : "none"
+											border: hasPieceAndIsInHand? "3px solid yellow" : isALegalMoveTarget? square.piece? "3px solid red" : "3px solid blue" : "none"
 										}} 
 										key={i}
 										onClick={this.onSquareClick.bind(this,square)}
@@ -80,16 +89,17 @@ export class GameBoard extends React.Component {
   		this.props.dispatch({
 	    	type: "PLACE_PIECE",
 	    	piece: this.props.ui.pieceInHand,
-	    	targetPos: { x:square.x, y:square.y }
+	    	targetPos: { row:square.row, column:square.column }
 	    });
-  	} else if( square.piece ) {
+  	} else if( square.piece && square.piece.color===this.props.gameState.turn ) {
   		this.props.dispatch({
 	    	type: "PICK_UP_PIECE",
 	    	piece: {
 	    		type: square.piece.type,
 	    		color: square.piece.color,
-	    		originPos: {x:square.x, y:square.y}
-	    	}
+	    		originPos: {row:square.row, column:square.column}
+	    	},
+	    	gameState: this.props.gameState
 	    });
   	}
   }
@@ -98,7 +108,7 @@ export class GameBoard extends React.Component {
 // export the connected class
 function mapStateToProps(state) {
   return {
-    game_board: state.game_board,
+    gameState: state.gameState,
     ui: state.ui
   };
 }

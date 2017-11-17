@@ -1,11 +1,14 @@
+import moveIsLegal from "../moveIsLegal";
+
 const initialState = {
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
-    pieceInHand: null
+    pieceInHand: null,
+    legalMoveSquares: []
 };
 
 export default function uiReducer(state = initialState, action) {
-	switch (action.type) {
+	switch( action.type ) {
         case "SCREEN_RESIZE":
         	return Object.assign({}, state, {
                 screenWidth: action.screenWidth,
@@ -18,7 +21,8 @@ export default function uiReducer(state = initialState, action) {
                     type: action.piece.type,
                     color: action.piece.color,
                     originPos: action.piece.originPos
-                }
+                },
+                legalMoveSquares: getLegalMoveSquares( action.piece, action.gameState )
             });
 
         case "PLACE_PIECE":
@@ -29,4 +33,18 @@ export default function uiReducer(state = initialState, action) {
 
         default: return state;
     }
+}
+
+function getLegalMoveSquares( pieceToMove, gameState ) {
+    var result = [];
+
+    for( var row = 0; row < 8; ++row ) {
+        for( var column = 0; column < 8; ++column ) {
+            if( moveIsLegal(pieceToMove, {row,column}, gameState) ) {
+                result.push( {row,column} );
+            }
+        }            
+    }
+
+    return result;
 }
