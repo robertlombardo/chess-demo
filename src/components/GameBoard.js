@@ -23,6 +23,8 @@ export class GameBoard extends React.Component {
 		black_pawn: { x:SQUARE_SIZE*5, y:SQUARE_SIZE }
 	}
 
+	console.log( this.props.ui );
+
     return (
 		<Table className="game-board" style={{width:BOARD_SIZE}}>
 		    <tbody>
@@ -30,8 +32,21 @@ export class GameBoard extends React.Component {
 					return( 
 						<tr style={{height:SQUARE_SIZE}} key={i}>
 							{row.map((square,i)=>{
+								const hasPieceAndIsInHand = 
+									   this.props.ui.pieceInHand
+									&& this.props.ui.pieceInHand.originPos.x===square.x
+									&& this.props.ui.pieceInHand.originPos.y===square.y;
+
 								return(
-									<td className={"square "+square.color+"-square"} style={{width:SQUARE_SIZE,height:SQUARE_SIZE}} key={i}>
+									<td className={"square "+square.color+"-square"} 
+										style={{
+											width:SQUARE_SIZE,
+											height:SQUARE_SIZE,
+											border: hasPieceAndIsInHand? "3px solid yellow" : "none"
+										}} 
+										key={i}
+										onClick={this.onSquareClick.bind(this,square)}
+									>
 										{getGamePiece(square)}
 									</td>								
 								)
@@ -58,6 +73,25 @@ export class GameBoard extends React.Component {
     		)
     	}
     }
+  }
+
+  onSquareClick( square ) {
+  	if( this.props.ui.pieceInHand ) {
+  		this.props.dispatch({
+	    	type: "PLACE_PIECE",
+	    	piece: this.props.ui.pieceInHand,
+	    	targetPos: { x:square.x, y:square.y }
+	    });
+  	} else if( square.piece ) {
+  		this.props.dispatch({
+	    	type: "PICK_UP_PIECE",
+	    	piece: {
+	    		type: square.piece.type,
+	    		color: square.piece.color,
+	    		originPos: {x:square.x, y:square.y}
+	    	}
+	    });
+  	}
   }
 }
 
