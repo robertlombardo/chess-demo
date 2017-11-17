@@ -1,3 +1,9 @@
+const PATHS_BY_PIECE = {
+	bishop: ["squaresUL","squaresUR","squaresDR","squaresDL"],
+	rook: ["squaresL","squaresR","squaresU","squaresD"]
+};
+PATHS_BY_PIECE.queen = PATHS_BY_PIECE.bishop.concat(PATHS_BY_PIECE.rook);
+
 function moveIsLegal( pieceToMove, targetPos, gameState ) {
 	if( !pieceToMove || !targetPos || !gameState ) {
 		return false;
@@ -14,18 +20,16 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 	}
 
 	// create paths for pieces that move in straight lines
-	var MOVE_PATHS;
+	var MOVE_PATHS = {};
 	if( pieceToMove.type==="queen" || pieceToMove.type==="bishop" || pieceToMove.type==="rook" ) {
-		MOVE_PATHS = { 
-			squaresL: getAvailableSquaresInDirection( 0, -1 ),
-			squaresR: getAvailableSquaresInDirection( 0, 1 ),
-			squaresU: getAvailableSquaresInDirection( -1, 0 ),
-			squaresD: getAvailableSquaresInDirection( 1, 0 ),
-			squaresUL: getAvailableSquaresInDirection( -1, -1 ),
-			squaresUR: getAvailableSquaresInDirection( -1, 1 ),
-			squaresDR: getAvailableSquaresInDirection( 1, 1 ),
-			squaresDL: getAvailableSquaresInDirection( 1, -1 )
-		}
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresL")>-1 ) MOVE_PATHS.squaresL = getAvailableSquaresInDirection( 0, -1 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresR")>-1 ) MOVE_PATHS.squaresR = getAvailableSquaresInDirection( 0, 1 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresU")>-1 ) MOVE_PATHS.squaresU = getAvailableSquaresInDirection( -1, 0 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresD")>-1 ) MOVE_PATHS.squaresD = getAvailableSquaresInDirection( 1, 0 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresUL")>-1 ) MOVE_PATHS.squaresUL = getAvailableSquaresInDirection( -1, -1 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresUR")>-1 ) MOVE_PATHS.squaresUR = getAvailableSquaresInDirection( -1, 1 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresDR")>-1 ) MOVE_PATHS.squaresDR = getAvailableSquaresInDirection( 1, 1 );
+		if( PATHS_BY_PIECE[pieceToMove.type].indexOf("squaresDL")>-1 ) MOVE_PATHS.squaresDL = getAvailableSquaresInDirection( 1, -1 );
 
 		function getAvailableSquaresInDirection( rowIncrement, columnIncrement ) {
 			const result = [];
@@ -91,6 +95,8 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 			// TO DO: en passant
 
 		case "queen":
+		case "bishop":
+		case "rook":
 			for( var prop in MOVE_PATHS ) {
 				for( var i = 0; i < MOVE_PATHS[prop].length; ++i ) {
 					if( MOVE_PATHS[prop][i].row===targetPos.row && MOVE_PATHS[prop][i].column===targetPos.column ) {
@@ -100,6 +106,7 @@ function moveIsLegal( pieceToMove, targetPos, gameState ) {
 			}
 
 			return false;
+
 
 	}	
 }
