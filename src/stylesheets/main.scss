@@ -9,3 +9,12 @@
 .white-square {
 	background-color: lightgrey;
 }
+
+.square {
+	position: relative;
+	overflow: hidden;
+}
+
+.game-piece {
+	position: absolute;
+}
