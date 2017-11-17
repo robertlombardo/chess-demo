@@ -3,12 +3,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { store } from "./store.js";
-import { router } from "./router.js";
+import ChessModule from "./components/ChessModule";
 
 // render the main component
 ReactDOM.render(
   <Provider store={store}>
-    {router}
+    <ChessModule />
   </Provider>,
-  document.getElementById('app')
+  document.getElementById('chessModuleParent')
 );
